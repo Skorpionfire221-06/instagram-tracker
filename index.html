@@ -1,34 +1,49 @@
-<!-- index.html -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="apple-mobile-web-app-title" content="FollowIQ">
-    <title>FollowIQ Tracker</title>
+    <title>Follow Tracker</title>
     <link rel="stylesheet" href="styles.css">
 </head>
 <body onload="loadDashboardStats()">
 
-    <div class="container">
+    <div class="app-wrapper">
         <h1>Dashboard</h1>
 
-        <!-- File Uploaders -->
         <div class="upload-card">
-            <label for="followersFile">1. Followers (followers_1.json)</label>
-            <input type="file" id="followersFile" accept=".json">
+            <div class="upload-header">
+                <div class="icon-box">
+                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
+                </div>
+                <div class="upload-titles">
+                    <span class="upload-title">Followers List</span>
+                    <span class="upload-subtitle" id="label-followers">followers_1.json</span>
+                </div>
+            </div>
+            <label for="followersFile" class="custom-file-upload">Select File</label>
+            <input type="file" id="followersFile" accept=".json" onchange="updateFileName('followersFile', 'label-followers')">
         </div>
 
         <div class="upload-card">
-            <label for="followingFile">2. Following (following.json)</label>
-            <input type="file" id="followingFile" accept=".json">
+            <div class="upload-header">
+                <div class="icon-box">
+                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                </div>
+                <div class="upload-titles">
+                    <span class="upload-title">Following List</span>
+                    <span class="upload-subtitle" id="label-following">following.json</span>
+                </div>
+            </div>
+            <label for="followingFile" class="custom-file-upload">Select File</label>
+            <input type="file" id="followingFile" accept=".json" onchange="updateFileName('followingFile', 'label-following')">
         </div>
 
         <button id="analyzeBtn" class="btn-primary" onclick="processFiles()">Analyze Data</button>
 
-        <!-- Navigation Cards -->
         <a href="not_following_back.html" class="nav-card">
             <span>Not Following Me Back</span>
             <div class="card-right">
@@ -55,5 +70,16 @@
     </div>
 
     <script src="logic.js"></script>
+    <script>
+        function updateFileName(inputId, labelId) {
+            const input = document.getElementById(inputId);
+            const label = document.getElementById(labelId);
+            if (input.files.length > 0) {
+                label.innerText = input.files[0].name;
+                label.style.color = "#007aff";
+                label.style.fontWeight = "600";
+            }
+        }
+    </script>
 </body>
 </html>

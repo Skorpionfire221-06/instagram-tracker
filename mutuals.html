@@ -1,22 +1,23 @@
-<!-- mutuals.html -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>Mutuals</title>
     <link rel="stylesheet" href="styles.css">
 </head>
 <body onload="renderListPage('mutuals')">
+    <div class="app-wrapper">
+        
+        <div class="header-bar">
+            <a href="index.html" class="back-btn">‹ Back</a>
+            <h2>Mutual Connections</h2>
+            <div style="width: 60px;"></div> 
+        </div>
 
-    <div class="header-bar">
-        <a href="index.html" class="back-btn">‹ Back</a>
-        <h2>Mutuals</h2>
-        <div style="width: 50px;"></div>
+        <div class="list-container" id="data-list"></div>
+        
     </div>
-
-    <div class="list-container" id="data-list"></div>
-
     <script src="logic.js"></script>
 </body>
 </html>

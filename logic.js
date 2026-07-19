@@ -1,5 +1,3 @@
-// logic.js
-
 function extractUsernames(data) {
     let usernames = [];
     function search(obj) {
@@ -38,7 +36,6 @@ async function processFiles() {
         return;
     }
 
-    // Update button state to show it's working
     const btn = document.getElementById('analyzeBtn');
     btn.innerText = "Analyzing...";
 
@@ -52,17 +49,14 @@ async function processFiles() {
         const followersSet = new Set(followersArr);
         const followingSet = new Set(followingArr);
 
-        // Calculate categories
         const notFollowingBack = followingArr.filter(user => !followersSet.has(user));
         const fans = followersArr.filter(user => !followingSet.has(user));
         const mutuals = followingArr.filter(user => followersSet.has(user));
 
-        // Save exactly as a native app database would (to local device storage)
         localStorage.setItem('notFollowingBack', JSON.stringify(notFollowingBack));
         localStorage.setItem('fans', JSON.stringify(fans));
         localStorage.setItem('mutuals', JSON.stringify(mutuals));
 
-        // Update the dashboard numbers instantly
         loadDashboardStats();
         btn.innerText = "Data Updated!";
         setTimeout(() => btn.innerText = "Analyze Data", 2000);
@@ -73,7 +67,6 @@ async function processFiles() {
     }
 }
 
-// Function to update the numbers on the index page
 function loadDashboardStats() {
     const notFollowingBack = JSON.parse(localStorage.getItem('notFollowingBack') || '[]');
     const fans = JSON.parse(localStorage.getItem('fans') || '[]');
@@ -88,7 +81,6 @@ function loadDashboardStats() {
     if(el3) el3.innerText = mutuals.length;
 }
 
-// Function to render the lists on the sub-pages
 function renderListPage(storageKey) {
     const data = JSON.parse(localStorage.getItem(storageKey) || '[]');
     const listContainer = document.getElementById('data-list');
