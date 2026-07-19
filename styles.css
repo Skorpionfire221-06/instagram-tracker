@@ -1,7 +1,7 @@
 :root {
     --primary: #c084fc; 
     --primary-hover: #a855f7;
-    --card-bg: rgba(15, 10, 25, 0.55); /* Darker glass for readability */
+    --card-bg: rgba(20, 15, 35, 0.45);
     --card-border: rgba(255, 255, 255, 0.15);
     --text-main: #ffffff;
     --text-muted: rgba(255, 255, 255, 0.7);
@@ -15,10 +15,76 @@ body {
     padding: 0;
     color: var(--text-main);
     -webkit-font-smoothing: antialiased;
-    /* High-res authentic galaxy background */
-    background: url('https://images.unsplash.com/photo-1462331940025-496dfbfc7564?q=80&w=1080&auto=format&fit=crop') no-repeat center center fixed;
-    background-size: cover;
+    background-color: #050510;
     overflow-x: hidden;
+}
+
+.galaxy-wrapper {
+    position: fixed;
+    top: 0; left: 0; 
+    width: 100vw; height: 100vh;
+    z-index: -5;
+    background: linear-gradient(to bottom, #050510 0%, #0a0515 100%);
+    overflow: hidden;
+}
+
+.nebula {
+    position: absolute;
+    top: -50%; left: -50%;
+    width: 200vw; height: 200vh;
+    background: 
+        radial-gradient(circle at 25% 30%, rgba(138, 43, 226, 0.35) 0%, transparent 40%),
+        radial-gradient(circle at 75% 70%, rgba(75, 0, 130, 0.45) 0%, transparent 45%),
+        radial-gradient(circle at 50% 60%, rgba(192, 132, 252, 0.25) 0%, transparent 50%),
+        radial-gradient(circle at 80% 20%, rgba(255, 0, 128, 0.15) 0%, transparent 35%);
+    filter: blur(80px);
+    animation: pulseNebula 25s ease-in-out infinite alternate;
+}
+
+@keyframes pulseNebula {
+    0% { transform: scale(1) rotate(0deg); opacity: 0.7; }
+    100% { transform: scale(1.15) rotate(5deg); opacity: 1; }
+}
+
+.stars-container {
+    position: absolute;
+    top: 0; left: 0; 
+    width: 100%; height: 200%;
+    animation: driftStars 120s linear infinite;
+}
+
+.stars-1, .stars-2, .stars-3 {
+    position: absolute;
+    top: 0; left: 0; 
+    width: 100%; height: 100%;
+    background-repeat: repeat;
+}
+
+.stars-1 {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Ccircle cx='20' cy='50' r='1' fill='%23ffffff' opacity='0.8'/%3E%3Ccircle cx='150' cy='180' r='1' fill='%23ffffff' opacity='0.5'/%3E%3Ccircle cx='80' cy='120' r='1.5' fill='%23ffffff' opacity='0.9'/%3E%3Ccircle cx='180' cy='40' r='1' fill='%23ffffff' opacity='0.6'/%3E%3C/svg%3E");
+    background-size: 150px 150px;
+}
+
+.stars-2 {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Ccircle cx='100' cy='80' r='1.5' fill='%23c084fc' opacity='0.7'/%3E%3Ccircle cx='250' cy='220' r='2' fill='%23ffffff' opacity='0.6'/%3E%3Ccircle cx='40' cy='280' r='1' fill='%23ffffff' opacity='0.9'/%3E%3Ccircle cx='280' cy='50' r='1.5' fill='%23e879f9' opacity='0.5'/%3E%3C/svg%3E");
+    background-size: 250px 250px;
+    animation: twinkle 4s infinite alternate;
+}
+
+.stars-3 {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='400'%3E%3Ccircle cx='200' cy='200' r='2.5' fill='%23ffffff' opacity='0.9'/%3E%3Cpath d='M200 190 L200 210 M190 200 L210 200' stroke='%23ffffff' stroke-width='0.5' opacity='0.7'/%3E%3Ccircle cx='90' cy='350' r='2' fill='%23ffffff' opacity='0.6'/%3E%3Ccircle cx='350' cy='80' r='2' fill='%23c084fc' opacity='0.8'/%3E%3C/svg%3E");
+    background-size: 400px 400px;
+    animation: twinkle 7s infinite alternate-reverse;
+}
+
+@keyframes driftStars {
+    0% { transform: translateY(0); }
+    100% { transform: translateY(-50%); }
+}
+
+@keyframes twinkle {
+    0% { opacity: 0.3; }
+    100% { opacity: 1; }
 }
 
 .app-wrapper {

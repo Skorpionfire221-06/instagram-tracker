@@ -27,11 +27,41 @@ function readFileAsync(file) {
     });
 }
 
+// Function to handle ZIP extraction in the browser
+async function processZipFile(file) {
+    const zip = new JSZip();
+    const contents = await zip.loadAsync(file);
+    
+    let followersArr = [];
+    let followingArr = [];
+
+    // Loop through every file inside the ZIP archive
+    for (const [filename, zipEntry] of Object.entries(contents.files)) {
+        // Skip folders, only look at JSON files
+        if (!zipEntry.dir && filename.endsWith('.json')) {
+            if (filename.toLowerCase().includes('follower')) {
+                const textData = await zipEntry.async("string");
+                try {
+                    const jsonData = JSON.parse(textData);
+                    followersArr = followersArr.concat(extractUsernames(jsonData));
+                } catch(e) { console.error("Error parsing follower JSON inside ZIP"); }
+            } else if (filename.toLowerCase().includes('following')) {
+                const textData = await zipEntry.async("string");
+                try {
+                    const jsonData = JSON.parse(textData);
+                    followingArr = followingArr.concat(extractUsernames(jsonData));
+                } catch(e) { console.error("Error parsing following JSON inside ZIP"); }
+            }
+        }
+    }
+    return { followersArr, followingArr };
+}
+
 async function processFiles() {
-    const fileInput = document.getElementById('jsonFiles');
+    const fileInput = document.getElementById('dataFiles');
 
     if (fileInput.files.length === 0) {
-        alert("Please select your JSON files.");
+        alert("Please select your Instagram ZIP export or JSON files.");
         return;
     }
 
@@ -40,34 +70,45 @@ async function processFiles() {
     btn.style.opacity = "0.7";
 
     try {
-        let followersArr = [];
-        let followingArr = [];
+        let allFollowers = [];
+        let allFollowing = [];
 
+        // Loop through uploaded files (works for both 1 ZIP file or 2 JSON files)
         for (let i = 0; i < fileInput.files.length; i++) {
             const file = fileInput.files[i];
-            const json = await readFileAsync(file);
-            const extracted = extractUsernames(json);
             
-            if (file.name.toLowerCase().includes('follower')) {
-                followersArr = followersArr.concat(extracted);
-            } else if (file.name.toLowerCase().includes('following')) {
-                followingArr = followingArr.concat(extracted);
+            // Branch 1: User uploaded the master ZIP file
+            if (file.name.toLowerCase().endsWith('.zip')) {
+                const zipResults = await processZipFile(file);
+                allFollowers = allFollowers.concat(zipResults.followersArr);
+                allFollowing = allFollowing.concat(zipResults.followingArr);
+            } 
+            // Branch 2: User manually extracted and uploaded JSON files
+            else if (file.name.toLowerCase().endsWith('.json')) {
+                const json = await readFileAsync(file);
+                const extracted = extractUsernames(json);
+                
+                if (file.name.toLowerCase().includes('follower')) {
+                    allFollowers = allFollowers.concat(extracted);
+                } else if (file.name.toLowerCase().includes('following')) {
+                    allFollowing = allFollowing.concat(extracted);
+                }
             }
         }
 
-        if (followersArr.length === 0 && followingArr.length === 0) {
-            alert("No follower/following data found. Make sure you selected the correct Instagram JSONs.");
+        if (allFollowers.length === 0 && allFollowing.length === 0) {
+            alert("No follower/following data found. Make sure you selected the correct Instagram export.");
             btn.innerText = "Analyze Data";
             btn.style.opacity = "1";
             return;
         }
 
-        const followersSet = new Set(followersArr);
-        const followingSet = new Set(followingArr);
+        const followersSet = new Set(allFollowers);
+        const followingSet = new Set(allFollowing);
 
-        const notFollowingBack = followingArr.filter(user => !followersSet.has(user));
-        const fans = followersArr.filter(user => !followingSet.has(user));
-        const mutuals = followingArr.filter(user => followersSet.has(user));
+        const notFollowingBack = allFollowing.filter(user => !followersSet.has(user));
+        const fans = allFollowers.filter(user => !followingSet.has(user));
+        const mutuals = allFollowing.filter(user => followersSet.has(user));
 
         localStorage.setItem('notFollowingBack', JSON.stringify(notFollowingBack));
         localStorage.setItem('fans', JSON.stringify(fans));
@@ -81,7 +122,8 @@ async function processFiles() {
         }, 2000);
 
     } catch (error) {
-        alert("Error processing files.");
+        alert("Error processing files. Ensure you are uploading the official Instagram export.");
+        console.error(error);
         btn.innerText = "Analyze Data";
         btn.style.opacity = "1";
     }

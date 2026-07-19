@@ -8,8 +8,19 @@
     <meta name="apple-mobile-web-app-title" content="FollowIQ">
     <title>Follow Tracker</title>
     <link rel="stylesheet" href="styles.css">
+    <!-- JSZip Library to process ZIP files directly on the iPhone -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
 </head>
 <body onload="loadDashboardStats()">
+
+    <div class="galaxy-wrapper">
+        <div class="nebula"></div>
+        <div class="stars-container">
+            <div class="stars-1"></div>
+            <div class="stars-2"></div>
+            <div class="stars-3"></div>
+        </div>
+    </div>
 
     <div class="app-wrapper">
         <h1>Dashboard</h1>
@@ -21,11 +32,11 @@
                 </div>
                 <div class="upload-titles">
                     <span class="upload-title">Instagram Data</span>
-                    <span class="upload-subtitle" id="label-files">Select both JSON files</span>
+                    <span class="upload-subtitle" id="label-files">Select ZIP Export or JSON files</span>
                 </div>
             </div>
-            <label for="jsonFiles" class="custom-file-upload">Select Files</label>
-            <input type="file" id="jsonFiles" accept=".json" multiple onchange="updateFileName()">
+            <label for="dataFiles" class="custom-file-upload">Select File(s)</label>
+            <input type="file" id="dataFiles" accept=".zip, .json" multiple onchange="updateFileName()">
         </div>
 
         <button id="analyzeBtn" class="btn-primary" onclick="processFiles()">Analyze Data</button>
@@ -58,7 +69,7 @@
     <script src="logic.js"></script>
     <script>
         function updateFileName() {
-            const input = document.getElementById('jsonFiles');
+            const input = document.getElementById('dataFiles');
             const label = document.getElementById('label-files');
             if (input.files.length === 1) {
                 label.innerText = input.files[0].name;
