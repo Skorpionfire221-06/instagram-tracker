@@ -11,16 +11,9 @@
 </head>
 <body onload="loadDashboardStats()">
 
-    <!-- Galaxy Background Elements -->
-    <div class="galaxy-bg"></div>
-    <div class="stars"></div>
-    <div class="orb-1"></div>
-    <div class="orb-2"></div>
-
     <div class="app-wrapper">
         <h1>Dashboard</h1>
 
-        <!-- Single Upload Card -->
         <div class="glass-card">
             <div class="upload-header">
                 <div class="icon-box">
@@ -31,12 +24,11 @@
                     <span class="upload-subtitle" id="label-files">Select both JSON files</span>
                 </div>
             </div>
-            <!-- The "multiple" attribute allows picking both files at once -->
             <label for="jsonFiles" class="custom-file-upload">Select Files</label>
             <input type="file" id="jsonFiles" accept=".json" multiple onchange="updateFileName()">
         </div>
 
-        <button id="analyzeBtn" class="btn-primary" onclick="processFiles()">Analyze Galaxy Data</button>
+        <button id="analyzeBtn" class="btn-primary" onclick="processFiles()">Analyze Data</button>
 
         <a href="not_following_back.html" class="nav-card">
             <span>Not Following Me Back</span>

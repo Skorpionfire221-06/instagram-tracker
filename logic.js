@@ -43,13 +43,11 @@ async function processFiles() {
         let followersArr = [];
         let followingArr = [];
 
-        // Loop through all selected files in the single upload
         for (let i = 0; i < fileInput.files.length; i++) {
             const file = fileInput.files[i];
             const json = await readFileAsync(file);
             const extracted = extractUsernames(json);
             
-            // Automatically sort the data based on the file name
             if (file.name.toLowerCase().includes('follower')) {
                 followersArr = followersArr.concat(extracted);
             } else if (file.name.toLowerCase().includes('following')) {
@@ -59,7 +57,7 @@ async function processFiles() {
 
         if (followersArr.length === 0 && followingArr.length === 0) {
             alert("No follower/following data found. Make sure you selected the correct Instagram JSONs.");
-            btn.innerText = "Analyze Galaxy Data";
+            btn.innerText = "Analyze Data";
             btn.style.opacity = "1";
             return;
         }
@@ -78,13 +76,13 @@ async function processFiles() {
         loadDashboardStats();
         btn.innerText = "Data Synchronized!";
         setTimeout(() => {
-            btn.innerText = "Analyze Galaxy Data";
+            btn.innerText = "Analyze Data";
             btn.style.opacity = "1";
         }, 2000);
 
     } catch (error) {
         alert("Error processing files.");
-        btn.innerText = "Analyze Galaxy Data";
+        btn.innerText = "Analyze Data";
         btn.style.opacity = "1";
     }
 }
