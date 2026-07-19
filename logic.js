@@ -27,7 +27,6 @@ function readFileAsync(file) {
     });
 }
 
-// Gives the UI time to animate the progress bar
 function delay(ms) {
     return new Promise(resolve => setTimeout(resolve, ms));
 }
@@ -41,7 +40,6 @@ async function processFiles() {
         return;
     }
 
-    // Build the animated progress bar inside the button
     btn.disabled = true;
     btn.innerHTML = `
         <div style="position: relative; z-index: 10;">Analyzing Data <span id="progressText">0%</span></div>
@@ -58,7 +56,7 @@ async function processFiles() {
 
     try {
         await delay(100);
-        updateProgress(10); // Initializing
+        updateProgress(10);
 
         let allFollowers = [];
         let allFollowing = [];
@@ -66,11 +64,9 @@ async function processFiles() {
         for (let i = 0; i < fileInput.files.length; i++) {
             const file = fileInput.files[i];
             
-            // IF THE USER UPLOADED A ZIP FILE
+            // IF ZIP FILE
             if (file.name.toLowerCase().endsWith('.zip')) {
-                if (typeof JSZip === 'undefined') {
-                    throw new Error("JSZip did not load. Please check your internet connection.");
-                }
+                if (typeof JSZip === 'undefined') throw new Error("JSZip did not load.");
                 
                 updateProgress(20);
                 await delay(100);
@@ -84,37 +80,39 @@ async function processFiles() {
                 let fileCount = Object.keys(contents.files).length;
                 let processed = 0;
 
-                for (const [filename, zipEntry] of Object.entries(contents.files)) {
+                for (const [fullPath, zipEntry] of Object.entries(contents.files)) {
                     processed++;
                     
-                    // Smoothly update the progress bar while tearing through the zip
+                    // Extracts just the file name, ignoring the folder paths to prevent the bug
+                    const baseName = fullPath.split('/').pop().toLowerCase();
+
                     if (processed % 30 === 0) {
                         let currentPercent = 40 + Math.floor((processed / fileCount) * 45);
                         updateProgress(currentPercent);
-                        await delay(10); // Let the animation play
+                        await delay(10); 
                     }
 
-                    if (!zipEntry.dir && filename.endsWith('.json')) {
-                        if (filename.toLowerCase().includes('follower')) {
+                    if (!zipEntry.dir && baseName.endsWith('.json')) {
+                        if (baseName.includes('follower')) {
                             const textData = await zipEntry.async("string");
                             try { allFollowers = allFollowers.concat(extractUsernames(JSON.parse(textData))); } catch(e) {}
-                        } else if (filename.toLowerCase().includes('following')) {
+                        } else if (baseName.includes('following')) {
                             const textData = await zipEntry.async("string");
                             try { allFollowing = allFollowing.concat(extractUsernames(JSON.parse(textData))); } catch(e) {}
                         }
                     }
                 }
             } 
-            
-            // IF THE USER UPLOADED JSON FILES DIRECTLY
+            // IF JSON FILE
             else if (file.name.toLowerCase().endsWith('.json')) {
                 updateProgress(45);
                 const json = await readFileAsync(file);
                 const extracted = extractUsernames(json);
+                const baseName = file.name.toLowerCase();
                 
-                if (file.name.toLowerCase().includes('follower')) {
+                if (baseName.includes('follower')) {
                     allFollowers = allFollowers.concat(extracted);
-                } else if (file.name.toLowerCase().includes('following')) {
+                } else if (baseName.includes('following')) {
                     allFollowing = allFollowing.concat(extracted);
                 }
             }
@@ -122,6 +120,10 @@ async function processFiles() {
 
         updateProgress(90);
         await delay(200);
+
+        // Remove any duplicates
+        allFollowers = [...new Set(allFollowers)];
+        allFollowing = [...new Set(allFollowing)];
 
         if (allFollowers.length === 0 && allFollowing.length === 0) {
             alert("No follower/following data found. Make sure you selected the official Instagram export.");
