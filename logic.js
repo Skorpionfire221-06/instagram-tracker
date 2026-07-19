@@ -1,18 +1,26 @@
+// NEW: Safely extracts usernames regardless of which Instagram JSON structure it is
 function extractUsernames(data) {
-    let usernames = [];
+    let usernames = new Set();
     function search(obj) {
         if (!obj) return;
         if (typeof obj === 'object') {
             if (obj.string_list_data && Array.isArray(obj.string_list_data)) {
                 obj.string_list_data.forEach(item => {
-                    if (item.value) usernames.push(item.value);
+                    // Method 1: The username is in "value" (followers_1.json style)
+                    if (item.value && item.value !== "") {
+                        usernames.add(item.value);
+                    } 
+                    // Method 2: The username is in "title" (following.json style)
+                    else if (obj.title && obj.title !== "") {
+                        usernames.add(obj.title);
+                    }
                 });
             }
             Object.values(obj).forEach(search);
         }
     }
     search(data);
-    return usernames;
+    return Array.from(usernames);
 }
 
 function readFileAsync(file) {
@@ -83,7 +91,6 @@ async function processFiles() {
                 for (const [fullPath, zipEntry] of Object.entries(contents.files)) {
                     processed++;
                     
-                    // Extracts just the file name, ignoring the folder paths to prevent the bug
                     const baseName = fullPath.split('/').pop().toLowerCase();
 
                     if (processed % 30 === 0) {

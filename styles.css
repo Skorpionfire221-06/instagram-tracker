@@ -1,7 +1,7 @@
 :root {
     --primary: #c084fc; 
     --primary-hover: #a855f7;
-    --card-bg: rgba(18, 12, 30, 0.75); /* Darker glass for readability against stars */
+    --card-bg: rgba(18, 12, 30, 0.75); 
     --card-border: rgba(255, 255, 255, 0.12);
     --text-main: #ffffff;
     --text-muted: rgba(255, 255, 255, 0.7);
