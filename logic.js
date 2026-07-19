@@ -28,23 +28,41 @@ function readFileAsync(file) {
 }
 
 async function processFiles() {
-    const followersInput = document.getElementById('followersFile').files[0];
-    const followingInput = document.getElementById('followingFile').files[0];
+    const fileInput = document.getElementById('jsonFiles');
 
-    if (!followersInput || !followingInput) {
-        alert("Please select both JSON files.");
+    if (fileInput.files.length === 0) {
+        alert("Please select your JSON files.");
         return;
     }
 
     const btn = document.getElementById('analyzeBtn');
-    btn.innerText = "Analyzing...";
+    btn.innerText = "Scanning Data...";
+    btn.style.opacity = "0.7";
 
     try {
-        const followersJson = await readFileAsync(followersInput);
-        const followingJson = await readFileAsync(followingInput);
+        let followersArr = [];
+        let followingArr = [];
 
-        const followersArr = extractUsernames(followersJson);
-        const followingArr = extractUsernames(followingJson);
+        // Loop through all selected files in the single upload
+        for (let i = 0; i < fileInput.files.length; i++) {
+            const file = fileInput.files[i];
+            const json = await readFileAsync(file);
+            const extracted = extractUsernames(json);
+            
+            // Automatically sort the data based on the file name
+            if (file.name.toLowerCase().includes('follower')) {
+                followersArr = followersArr.concat(extracted);
+            } else if (file.name.toLowerCase().includes('following')) {
+                followingArr = followingArr.concat(extracted);
+            }
+        }
+
+        if (followersArr.length === 0 && followingArr.length === 0) {
+            alert("No follower/following data found. Make sure you selected the correct Instagram JSONs.");
+            btn.innerText = "Analyze Galaxy Data";
+            btn.style.opacity = "1";
+            return;
+        }
 
         const followersSet = new Set(followersArr);
         const followingSet = new Set(followingArr);
@@ -58,12 +76,16 @@ async function processFiles() {
         localStorage.setItem('mutuals', JSON.stringify(mutuals));
 
         loadDashboardStats();
-        btn.innerText = "Data Updated!";
-        setTimeout(() => btn.innerText = "Analyze Data", 2000);
+        btn.innerText = "Data Synchronized!";
+        setTimeout(() => {
+            btn.innerText = "Analyze Galaxy Data";
+            btn.style.opacity = "1";
+        }, 2000);
 
     } catch (error) {
         alert("Error processing files.");
-        btn.innerText = "Analyze Data";
+        btn.innerText = "Analyze Galaxy Data";
+        btn.style.opacity = "1";
     }
 }
 

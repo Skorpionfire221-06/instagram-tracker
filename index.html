@@ -11,38 +11,32 @@
 </head>
 <body onload="loadDashboardStats()">
 
+    <!-- Galaxy Background Elements -->
+    <div class="galaxy-bg"></div>
+    <div class="stars"></div>
+    <div class="orb-1"></div>
+    <div class="orb-2"></div>
+
     <div class="app-wrapper">
         <h1>Dashboard</h1>
 
-        <div class="upload-card">
+        <!-- Single Upload Card -->
+        <div class="glass-card">
             <div class="upload-header">
                 <div class="icon-box">
-                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
+                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path></svg>
                 </div>
                 <div class="upload-titles">
-                    <span class="upload-title">Followers List</span>
-                    <span class="upload-subtitle" id="label-followers">followers_1.json</span>
+                    <span class="upload-title">Instagram Data</span>
+                    <span class="upload-subtitle" id="label-files">Select both JSON files</span>
                 </div>
             </div>
-            <label for="followersFile" class="custom-file-upload">Select File</label>
-            <input type="file" id="followersFile" accept=".json" onchange="updateFileName('followersFile', 'label-followers')">
+            <!-- The "multiple" attribute allows picking both files at once -->
+            <label for="jsonFiles" class="custom-file-upload">Select Files</label>
+            <input type="file" id="jsonFiles" accept=".json" multiple onchange="updateFileName()">
         </div>
 
-        <div class="upload-card">
-            <div class="upload-header">
-                <div class="icon-box">
-                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-                </div>
-                <div class="upload-titles">
-                    <span class="upload-title">Following List</span>
-                    <span class="upload-subtitle" id="label-following">following.json</span>
-                </div>
-            </div>
-            <label for="followingFile" class="custom-file-upload">Select File</label>
-            <input type="file" id="followingFile" accept=".json" onchange="updateFileName('followingFile', 'label-following')">
-        </div>
-
-        <button id="analyzeBtn" class="btn-primary" onclick="processFiles()">Analyze Data</button>
+        <button id="analyzeBtn" class="btn-primary" onclick="processFiles()">Analyze Galaxy Data</button>
 
         <a href="not_following_back.html" class="nav-card">
             <span>Not Following Me Back</span>
@@ -71,13 +65,15 @@
 
     <script src="logic.js"></script>
     <script>
-        function updateFileName(inputId, labelId) {
-            const input = document.getElementById(inputId);
-            const label = document.getElementById(labelId);
-            if (input.files.length > 0) {
+        function updateFileName() {
+            const input = document.getElementById('jsonFiles');
+            const label = document.getElementById('label-files');
+            if (input.files.length === 1) {
                 label.innerText = input.files[0].name;
-                label.style.color = "#007aff";
-                label.style.fontWeight = "600";
+                label.style.color = "var(--primary)";
+            } else if (input.files.length > 1) {
+                label.innerText = `${input.files.length} Files Selected`;
+                label.style.color = "var(--primary)";
             }
         }
     </script>
