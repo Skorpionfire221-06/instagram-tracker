@@ -1,0 +1,59 @@
+<!-- index.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="FollowIQ">
+    <title>FollowIQ Tracker</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body onload="loadDashboardStats()">
+
+    <div class="container">
+        <h1>Dashboard</h1>
+
+        <!-- File Uploaders -->
+        <div class="upload-card">
+            <label for="followersFile">1. Followers (followers_1.json)</label>
+            <input type="file" id="followersFile" accept=".json">
+        </div>
+
+        <div class="upload-card">
+            <label for="followingFile">2. Following (following.json)</label>
+            <input type="file" id="followingFile" accept=".json">
+        </div>
+
+        <button id="analyzeBtn" class="btn-primary" onclick="processFiles()">Analyze Data</button>
+
+        <!-- Navigation Cards -->
+        <a href="not_following_back.html" class="nav-card">
+            <span>Not Following Me Back</span>
+            <div class="card-right">
+                <span class="count-badge" id="count-not-following">0</span>
+                <span class="chevron">›</span>
+            </div>
+        </a>
+
+        <a href="fans.html" class="nav-card">
+            <span>I'm Not Following Back</span>
+            <div class="card-right">
+                <span class="count-badge" id="count-fans">0</span>
+                <span class="chevron">›</span>
+            </div>
+        </a>
+
+        <a href="mutuals.html" class="nav-card">
+            <span>Mutual Connections</span>
+            <div class="card-right">
+                <span class="count-badge" id="count-mutuals">0</span>
+                <span class="chevron">›</span>
+            </div>
+        </a>
+    </div>
+
+    <script src="logic.js"></script>
+</body>
+</html>

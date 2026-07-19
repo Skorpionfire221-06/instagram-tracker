@@ -1,0 +1,141 @@
+/* styles.css */
+body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    background-color: #f2f2f7; /* iOS background gray */
+    margin: 0;
+    padding: 0;
+    color: #000;
+}
+
+.container {
+    padding: 20px;
+    padding-top: 50px; /* Safe area for iPhone notch */
+}
+
+h1 {
+    font-size: 32px;
+    font-weight: 700;
+    margin-bottom: 20px;
+}
+
+h2 {
+    font-size: 20px;
+    text-align: center;
+    margin: 0;
+    flex-grow: 1;
+}
+
+/* Upload Section */
+.upload-card {
+    background: white;
+    border-radius: 14px;
+    padding: 16px;
+    margin-bottom: 15px;
+}
+
+.upload-card label {
+    display: block;
+    font-weight: 600;
+    margin-bottom: 8px;
+    font-size: 15px;
+}
+
+input[type="file"] {
+    width: 100%;
+    color: #8e8e93;
+    font-size: 14px;
+}
+
+.btn-primary {
+    background-color: #007aff;
+    color: white;
+    border: none;
+    padding: 16px;
+    width: 100%;
+    border-radius: 14px;
+    font-size: 17px;
+    font-weight: 600;
+    margin-bottom: 30px;
+    cursor: pointer;
+}
+
+.btn-primary:active {
+    background-color: #005bb5;
+}
+
+/* Dashboard Navigation Cards */
+.nav-card {
+    background: white;
+    border-radius: 14px;
+    padding: 16px 20px;
+    margin-bottom: 12px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    text-decoration: none;
+    color: #000;
+    font-size: 17px;
+    font-weight: 500;
+}
+
+.nav-card:active {
+    background-color: #e5e5ea;
+}
+
+.card-right {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.count-badge {
+    color: #8e8e93;
+    font-size: 17px;
+}
+
+.chevron {
+    color: #c7c7cc;
+    font-size: 20px;
+    font-weight: bold;
+}
+
+/* Sub-page styling (Lists) */
+.header-bar {
+    display: flex;
+    align-items: center;
+    padding: 20px;
+    padding-top: 50px;
+    background: #f2f2f7;
+    position: sticky;
+    top: 0;
+}
+
+.back-btn {
+    color: #007aff;
+    text-decoration: none;
+    font-size: 17px;
+    font-weight: 500;
+}
+
+.list-container {
+    background: white;
+    border-radius: 14px;
+    margin: 0 20px 20px 20px;
+    overflow: hidden;
+}
+
+.list-item {
+    padding: 16px 20px;
+    border-bottom: 1px solid #c6c6c8;
+    font-size: 17px;
+}
+
+.list-item:last-child {
+    border-bottom: none;
+}
+
+.empty-state {
+    padding: 20px;
+    text-align: center;
+    color: #8e8e93;
+}
