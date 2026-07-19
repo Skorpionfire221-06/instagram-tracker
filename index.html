@@ -7,8 +7,9 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="apple-mobile-web-app-title" content="FollowIQ">
     <title>Follow Tracker</title>
-    <link rel="stylesheet" href="styles.css">
-    <!-- JSZip Library to process ZIP files directly on the iPhone -->
+    <!-- The ?v=2 forces your iPhone to download the new files -->
+    <link rel="stylesheet" href="styles.css?v=2">
+    <!-- JSZip Library -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
 </head>
 <body onload="loadDashboardStats()">
@@ -35,7 +36,7 @@
                     <span class="upload-subtitle" id="label-files">Select ZIP Export or JSON files</span>
                 </div>
             </div>
-            <label for="dataFiles" class="custom-file-upload">Select File(s)</label>
+            <label for="dataFiles" class="custom-file-upload">Select File</label>
             <input type="file" id="dataFiles" accept=".zip, .json" multiple onchange="updateFileName()">
         </div>
 
@@ -66,7 +67,7 @@
         </a>
     </div>
 
-    <script src="logic.js"></script>
+    <script src="logic.js?v=2"></script>
     <script>
         function updateFileName() {
             const input = document.getElementById('dataFiles');

@@ -27,64 +27,88 @@ function readFileAsync(file) {
     });
 }
 
-// Function to handle ZIP extraction in the browser
-async function processZipFile(file) {
-    const zip = new JSZip();
-    const contents = await zip.loadAsync(file);
-    
-    let followersArr = [];
-    let followingArr = [];
-
-    // Loop through every file inside the ZIP archive
-    for (const [filename, zipEntry] of Object.entries(contents.files)) {
-        // Skip folders, only look at JSON files
-        if (!zipEntry.dir && filename.endsWith('.json')) {
-            if (filename.toLowerCase().includes('follower')) {
-                const textData = await zipEntry.async("string");
-                try {
-                    const jsonData = JSON.parse(textData);
-                    followersArr = followersArr.concat(extractUsernames(jsonData));
-                } catch(e) { console.error("Error parsing follower JSON inside ZIP"); }
-            } else if (filename.toLowerCase().includes('following')) {
-                const textData = await zipEntry.async("string");
-                try {
-                    const jsonData = JSON.parse(textData);
-                    followingArr = followingArr.concat(extractUsernames(jsonData));
-                } catch(e) { console.error("Error parsing following JSON inside ZIP"); }
-            }
-        }
-    }
-    return { followersArr, followingArr };
+// Gives the UI time to animate the progress bar
+function delay(ms) {
+    return new Promise(resolve => setTimeout(resolve, ms));
 }
 
 async function processFiles() {
     const fileInput = document.getElementById('dataFiles');
+    const btn = document.getElementById('analyzeBtn');
 
     if (fileInput.files.length === 0) {
-        alert("Please select your Instagram ZIP export or JSON files.");
+        alert("Please select your Instagram ZIP or JSON files.");
         return;
     }
 
-    const btn = document.getElementById('analyzeBtn');
-    btn.innerText = "Scanning Data...";
-    btn.style.opacity = "0.7";
+    // Build the animated progress bar inside the button
+    btn.disabled = true;
+    btn.innerHTML = `
+        <div style="position: relative; z-index: 10;">Analyzing Data <span id="progressText">0%</span></div>
+        <div id="progressBar" style="position: absolute; top: 0; left: 0; height: 100%; width: 0%; background: rgba(255,255,255,0.25); border-radius: inherit; transition: width 0.3s ease; z-index: 1;"></div>
+    `;
+
+    const progressText = document.getElementById('progressText');
+    const progressBar = document.getElementById('progressBar');
+
+    function updateProgress(percent) {
+        progressText.innerText = `${percent}%`;
+        progressBar.style.width = `${percent}%`;
+    }
 
     try {
+        await delay(100);
+        updateProgress(10); // Initializing
+
         let allFollowers = [];
         let allFollowing = [];
 
-        // Loop through uploaded files (works for both 1 ZIP file or 2 JSON files)
         for (let i = 0; i < fileInput.files.length; i++) {
             const file = fileInput.files[i];
             
-            // Branch 1: User uploaded the master ZIP file
+            // IF THE USER UPLOADED A ZIP FILE
             if (file.name.toLowerCase().endsWith('.zip')) {
-                const zipResults = await processZipFile(file);
-                allFollowers = allFollowers.concat(zipResults.followersArr);
-                allFollowing = allFollowing.concat(zipResults.followingArr);
+                if (typeof JSZip === 'undefined') {
+                    throw new Error("JSZip did not load. Please check your internet connection.");
+                }
+                
+                updateProgress(20);
+                await delay(100);
+
+                const zip = new JSZip();
+                const contents = await zip.loadAsync(file);
+                
+                updateProgress(40);
+                await delay(100);
+
+                let fileCount = Object.keys(contents.files).length;
+                let processed = 0;
+
+                for (const [filename, zipEntry] of Object.entries(contents.files)) {
+                    processed++;
+                    
+                    // Smoothly update the progress bar while tearing through the zip
+                    if (processed % 30 === 0) {
+                        let currentPercent = 40 + Math.floor((processed / fileCount) * 45);
+                        updateProgress(currentPercent);
+                        await delay(10); // Let the animation play
+                    }
+
+                    if (!zipEntry.dir && filename.endsWith('.json')) {
+                        if (filename.toLowerCase().includes('follower')) {
+                            const textData = await zipEntry.async("string");
+                            try { allFollowers = allFollowers.concat(extractUsernames(JSON.parse(textData))); } catch(e) {}
+                        } else if (filename.toLowerCase().includes('following')) {
+                            const textData = await zipEntry.async("string");
+                            try { allFollowing = allFollowing.concat(extractUsernames(JSON.parse(textData))); } catch(e) {}
+                        }
+                    }
+                }
             } 
-            // Branch 2: User manually extracted and uploaded JSON files
+            
+            // IF THE USER UPLOADED JSON FILES DIRECTLY
             else if (file.name.toLowerCase().endsWith('.json')) {
+                updateProgress(45);
                 const json = await readFileAsync(file);
                 const extracted = extractUsernames(json);
                 
@@ -96,10 +120,13 @@ async function processFiles() {
             }
         }
 
+        updateProgress(90);
+        await delay(200);
+
         if (allFollowers.length === 0 && allFollowing.length === 0) {
-            alert("No follower/following data found. Make sure you selected the correct Instagram export.");
-            btn.innerText = "Analyze Data";
-            btn.style.opacity = "1";
+            alert("No follower/following data found. Make sure you selected the official Instagram export.");
+            btn.innerHTML = "Analyze Data";
+            btn.disabled = false;
             return;
         }
 
@@ -114,18 +141,21 @@ async function processFiles() {
         localStorage.setItem('fans', JSON.stringify(fans));
         localStorage.setItem('mutuals', JSON.stringify(mutuals));
 
+        updateProgress(100);
+        await delay(300);
+
         loadDashboardStats();
-        btn.innerText = "Data Synchronized!";
+        btn.innerHTML = "Data Synchronized!";
+        
         setTimeout(() => {
-            btn.innerText = "Analyze Data";
-            btn.style.opacity = "1";
+            btn.innerHTML = "Analyze Data";
+            btn.disabled = false;
         }, 2000);
 
     } catch (error) {
-        alert("Error processing files. Ensure you are uploading the official Instagram export.");
-        console.error(error);
-        btn.innerText = "Analyze Data";
-        btn.style.opacity = "1";
+        alert("Error processing files: " + error.message);
+        btn.innerHTML = "Analyze Data";
+        btn.disabled = false;
     }
 }
 
